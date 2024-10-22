@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Push Notifications</title>
+    <title>Push Notifications Example</title>
 </head>
 <body>
     <h1>Push Notifications Example</h1>
@@ -19,25 +19,35 @@
                     console.error('Service Worker registration failed:', error);
                 });
 
+            // Request notification permission
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                } else {
+                    console.log('Notification permission denied.');
+                }
+            });
+
             document.getElementById('subscribe').addEventListener('click', function() {
                 sendPushNotification();
             });
         }
 
         function sendPushNotification() {
-            // This is where you would normally trigger a push notification from the server.
-            // For this example, we'll just simulate a notification.
             const options = {
                 body: 'This is a test notification!',
             };
 
-            // Check if service worker is available
-            if (navigator.serviceWorker) {
+            // Check if service worker is available and permission is granted
+            if (navigator.serviceWorker && Notification.permission === 'granted') {
                 navigator.serviceWorker.ready.then(function(registration) {
                     registration.showNotification('Test Notification', options);
                 });
+            } else {
+                console.error('Notification permission not granted or Service Worker not available.');
             }
         }
     </script>
 </body>
 </html>
+
