@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Push Notifications</title>
+</head>
+<body>
+    <h1>Push Notifications Example</h1>
+    <button id="subscribe">Send Push Notification</button>
+
+    <script>
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            navigator.serviceWorker.register('sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.error('Service Worker registration failed:', error);
+                });
+
+            document.getElementById('subscribe').addEventListener('click', function() {
+                sendPushNotification();
+            });
+        }
+
+        function sendPushNotification() {
+            // This is where you would normally trigger a push notification from the server.
+            // For this example, we'll just simulate a notification.
+            const options = {
+                body: 'This is a test notification!',
+            };
+
+            // Check if service worker is available
+            if (navigator.serviceWorker) {
+                navigator.serviceWorker.ready.then(function(registration) {
+                    registration.showNotification('Test Notification', options);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
