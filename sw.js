@@ -14,6 +14,6 @@ self.addEventListener('push', function(event) {
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     event.waitUntil(
-        clients.openWindow('https://example.com') // URL to open on click
+        clients.openWindow(' http://kokos-labs.github.io') // URL to open on click
     );
 });
