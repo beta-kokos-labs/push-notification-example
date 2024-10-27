@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Firebase Push Notifications</title>
-    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-messaging.js"></script>
-</head>
-<body>
-    <h1>Firebase Push Notifications</h1>
-    <button id="subscribe">Subscribe to Notifications</button>
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js';
+        import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/9.20.0/firebase-messaging.js';
 
-    <script>
         // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDjs8Qva2pjuJoG0CcQ-O9PLlGhjI1dcJY",
@@ -24,13 +21,13 @@ const firebaseConfig = {
 };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const messaging = firebase.messaging();
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
 
         // Request permission to send notifications
         document.getElementById('subscribe').addEventListener('click', async () => {
             try {
-                const token = await messaging.getToken();
+                const token = await getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' });
                 console.log('Token:', token);
                 // Save the token to your server or database
             } catch (error) {
@@ -39,7 +36,7 @@ const firebaseConfig = {
         });
 
         // Handle incoming messages
-        messaging.onMessage((payload) => {
+        onMessage(messaging, (payload) => {
             console.log('Message received. ', payload);
             const notificationTitle = payload.notification.title;
             const notificationOptions = {
@@ -50,5 +47,9 @@ const firebaseConfig = {
             new Notification(notificationTitle, notificationOptions);
         });
     </script>
+</head>
+<body>
+    <h1>Firebase Push Notifications</h1>
+    <button id="subscribe">Subscribe to Notifications</button>
 </body>
 </html>
