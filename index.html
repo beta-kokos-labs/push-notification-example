@@ -3,51 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Push Notifications Example</title>
+    <title>Firebase Push Notifications</title>
+    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.20.0/firebase-messaging.js"></script>
 </head>
 <body>
-    <h1>Push Notifications Example</h1>
-    <button id="subscribe">Send Push Notification</button>
+    <h1>Firebase Push Notifications</h1>
+    <button id="subscribe">Subscribe to Notifications</button>
 
     <script>
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
-            navigator.serviceWorker.register('sw.js')
-                .then(function(registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                })
-                .catch(function(error) {
-                    console.error('Service Worker registration failed:', error);
-                });
+        // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDjs8Qva2pjuJoG0CcQ-O9PLlGhjI1dcJY",
+  authDomain: "koko-labs.firebaseapp.com",
+  projectId: "koko-labs",
+  storageBucket: "koko-labs.appspot.com",
+  messagingSenderId: "117512760360",
+  appId: "1:117512760360:web:95bfefb0485872dcd6d91d",
+  measurementId: "G-26P6FRSFEV"
+};
 
-            // Request notification permission
-            Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                    console.log('Notification permission granted.');
-                } else {
-                    console.log('Notification permission denied.');
-                }
-            });
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
 
-            document.getElementById('subscribe').addEventListener('click', function() {
-                sendPushNotification();
-            });
-        }
+        // Request permission to send notifications
+        document.getElementById('subscribe').addEventListener('click', async () => {
+            try {
+                const token = await messaging.getToken();
+                console.log('Token:', token);
+                // Save the token to your server or database
+            } catch (error) {
+                console.error('Error getting token:', error);
+            }
+        });
 
-        function sendPushNotification() {
-            const options = {
-                body: 'This is a test notification!',
+        // Handle incoming messages
+        messaging.onMessage((payload) => {
+            console.log('Message received. ', payload);
+            const notificationTitle = payload.notification.title;
+            const notificationOptions = {
+                body: payload.notification.body,
+                icon: payload.notification.icon
             };
 
-            // Check if service worker is available and permission is granted
-            if (navigator.serviceWorker && Notification.permission === 'granted') {
-                navigator.serviceWorker.ready.then(function(registration) {
-                    registration.showNotification('Test Notification', options);
-                });
-            } else {
-                console.error('Notification permission not granted or Service Worker not available.');
-            }
-        }
+            new Notification(notificationTitle, notificationOptions);
+        });
     </script>
 </body>
 </html>
-
